@@ -34,7 +34,7 @@ void DComRxCon(int protocol, uint64_t pipe, uint64_t srcIA, DComFrame* frame, in
         return;
     }
 
-    if (respLen > DCOM_SINGLE_FRAME_SIZE_MAX) {
+    if (respLen > DCOM_PAYLOAD_SIZE_MAX) {
         // 长度过长则启动块传输
         DComLogInfo("service send too long:%d.start block tx.token:%d", respLen, frame->ControlWord.bit.Token);
         DComBlockTx(protocol, pipe, srcIA, DCOM_CODE_ACK, frame->ControlWord.bit.Rid, frame->ControlWord.bit.Token, 

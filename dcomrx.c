@@ -38,7 +38,7 @@ static void dealRecv(int protocol, uint64_t pipe, uint64_t srcIA, DComFrame* fra
 
 // DComRxLoad ƒ£øÈ‘ÿ»Î
 void DComRxLoad(void) {
-    gFifo = TZFifoCreate(DComMid, DCOM_RX_FIFO_LEN, sizeof(tDcomRxHeader) + DCOM_SINGLE_FRAME_SIZE_MAX);
+    gFifo = TZFifoCreate(DComMid, DCOM_RX_FIFO_LEN, sizeof(tDcomRxHeader) + DCOM_FRAME_SIZE_MAX);
     DComBlockRxSetCallback(dealRecv);
 }
 
@@ -76,7 +76,7 @@ static void dealRecv(int protocol, uint64_t pipe, uint64_t srcIA, DComFrame* fra
 void DComReceive(int protocol, uint64_t pipe, uint64_t srcIA, uint8_t* bytes, int size) {
     static tDcomRxHeader rx;
 
-    if (size < (int)sizeof(DComFrame) || size > DCOM_SINGLE_FRAME_SIZE_MAX) {
+    if (size < (int)sizeof(DComFrame) || size > DCOM_FRAME_SIZE_MAX) {
         DComLogWarn("receive data error:bytes to frame failed,size is wrong.src ia:0x%x size:%d", srcIA, size);
         return;
     }
@@ -97,12 +97,12 @@ void DComReceive(int protocol, uint64_t pipe, uint64_t srcIA, uint8_t* bytes, in
 int DComRxRun(void) {
     static struct pt pt;
     static tDcomRxHeader rx;
-    static uint8_t bytes[DCOM_SINGLE_FRAME_SIZE_MAX] = {0};
+    static uint8_t bytes[DCOM_FRAME_SIZE_MAX] = {0};
 
     PT_BEGIN(&pt);
     
     PT_WAIT_UNTIL(&pt, TZFifoReadable(gFifo));
-    if (TZFifoReadMix(gFifo, (uint8_t*)&rx, sizeof(tDcomRxHeader), bytes, DCOM_SINGLE_FRAME_SIZE_MAX) == false) {
+    if (TZFifoReadMix(gFifo, (uint8_t*)&rx, sizeof(tDcomRxHeader), bytes, DCOM_FRAME_SIZE_MAX) == false) {
         PT_EXIT(&pt);
     }
 

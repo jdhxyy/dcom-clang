@@ -122,7 +122,7 @@ static void checkTimeoutAndRetrySendFirstFrame(TZListNode* node) {
 static void sendFrame(tItem* item, int offset) {
     DComLogInfo("block tx send.token:%d offset:%d", item->token, offset);
     int delta = item->dataLen - offset;
-    int payloadLen = DCOM_SINGLE_FRAME_SIZE_MAX - sizeof(DComBlockHeader);
+    int payloadLen = DCOM_PAYLOAD_SIZE_MAX - sizeof(DComBlockHeader);
     if (payloadLen > delta) {
         payloadLen = delta;
     }
@@ -146,7 +146,7 @@ static void sendFrame(tItem* item, int offset) {
 
 // DComBlockTx ¿é´«Êä·¢ËÍ
 void DComBlockTx(int protocol, uint64_t pipe, uint64_t dstIA, int code, int rid, int token, uint8_t* data, int dataLen) {
-    if (dataLen <= DCOM_SINGLE_FRAME_SIZE_MAX) {
+    if (dataLen <= DCOM_PAYLOAD_SIZE_MAX) {
         return;
     }
     if (isNodeExist(protocol, pipe, dstIA, code, rid, token)) {

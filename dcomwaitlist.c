@@ -99,7 +99,7 @@ static void retrySend(TZListNode* node) {
     uint64_t now = TZTimeGet();
     if (now - item->timeStart > item->timeoutUs) {
         DComLogInfo("wait ack timeout!task failed!token:%d", item->token);
-        if (item->reqLen > DCOM_SINGLE_FRAME_SIZE_MAX) {
+        if (item->reqLen > DCOM_PAYLOAD_SIZE_MAX) {
             DComBlockRemove(item->protocol, item->pipe, item->dstIA, item->code, item->rid, item->token);
         }
 
@@ -122,7 +122,7 @@ static void retrySend(TZListNode* node) {
     }
 
     // 块传输不用此处重传.块传输模块自己负责
-    if (item->reqLen > DCOM_SINGLE_FRAME_SIZE_MAX) {
+    if (item->reqLen > DCOM_PAYLOAD_SIZE_MAX) {
         return;
     }
 
@@ -261,7 +261,7 @@ int DComCall(intptr_t handle) {
 }
 
 static int sendFrame(int protocol, uint64_t pipe, uint64_t dstIA, int code, int rid, int token, uint8_t* data, int dataLen) {
-    if (dataLen > DCOM_SINGLE_FRAME_SIZE_MAX) {
+    if (dataLen > DCOM_PAYLOAD_SIZE_MAX) {
         DComBlockTx(protocol, pipe, dstIA, code, rid, token, data, dataLen);
         return DCOM_OK;
     }

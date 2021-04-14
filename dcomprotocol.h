@@ -15,8 +15,10 @@
 #define DCOM_CODE_RST 3
 #define DCOM_CODE_BACK 4
 
-// 单帧最大字节数.超过此字节数需要块传输
-#define DCOM_SINGLE_FRAME_SIZE_MAX 255
+// 单帧载荷最大字节数.超过此字节数需要块传输
+#define DCOM_PAYLOAD_SIZE_MAX 255
+// 单帧最大字节数.头部+载荷
+#define DCOM_FRAME_SIZE_MAX 259
 
 #pragma pack(1)
 
