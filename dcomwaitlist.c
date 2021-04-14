@@ -150,14 +150,14 @@ static void retrySend(TZListNode* node) {
 
     item->lastRetryTimestamp = now;
     DComLogWarn("retry send.token:%d retry num:%d", item->token, item->retryNum);
-    int ret = sendFrame(item->protocol, item->pipe, item->dstIA, item->code, item->rid, item->token, item->req, 
+    int ret = sendFrame(item->protocol, item->pipe, item->dstIA, item->code, item->rid, item->token, item->req,
         item->reqLen);
     if (ret != DCOM_OK) {
          DComLogWarn("retry send failed!error:%d", ret);
     }
 }
 
-// DComRpcCreateHandle 创建RPC调用句柄
+// DComCallCreateHandle 创建同步调用句柄
 // protocol是协议号
 // pipe是通信管道
 // timeout是超时时间,单位:ms
@@ -165,7 +165,7 @@ static void retrySend(TZListNode* node) {
 // 本函数调用后需调用DComRpcCallCoroutine进行RPC通信,调用结果result中存储的是错误码.非DCOM_OK表示调用失败
 // 调用成功后,应答数据保存在resp中,注意要释放
 // 返回句柄.非0表示创建成功
-intptr_t DComRpcCreateHandle(int protocol, uint64_t pipe, uint64_t dstIA, int rid, int timeout, uint8_t* req, int reqLen, 
+intptr_t DComCallCreateHandle(int protocol, uint64_t pipe, uint64_t dstIA, int rid, int timeout, uint8_t* req, int reqLen,
     uint8_t** resp, int* respLen, int* result) {
     if (result == NULL) {
         return 0;
@@ -178,10 +178,17 @@ intptr_t DComRpcCreateHandle(int protocol, uint64_t pipe, uint64_t dstIA, int ri
         return 0;
     }
 
-    *resp = NULL;
-    *respLen = 0;
-
     tItem* item = (tItem*)node->Data;
+
+    item->code = DCOM_CODE_CON;
+    if (resp == NULL || respLen == NULL || timeout == 0) {
+        item->code = DCOM_CODE_NON;
+        item->isRxAck = true;
+    } else {
+        *resp = NULL;
+        *respLen = 0;
+    }
+
     item->ackCallback = NULL;
     item->protocol = protocol;
     item->pipe = pipe;
@@ -197,11 +204,6 @@ intptr_t DComRpcCreateHandle(int protocol, uint64_t pipe, uint64_t dstIA, int ri
     item->rid = rid;
     item->token = DComGetToken();
 
-    item->code = DCOM_CODE_CON;
-    if (item->resp == NULL || item->respLen == NULL || item->timeoutUs == 0) {
-        item->code = DCOM_CODE_NON;
-    }
-
     item->result = result;
 
     item->retryNum = 0;
@@ -209,10 +211,6 @@ intptr_t DComRpcCreateHandle(int protocol, uint64_t pipe, uint64_t dstIA, int ri
     TZListAppend(gList, node);
 
     (void)sendFrame(protocol, pipe, dstIA, item->code, rid, item->token, req, reqLen);
-    if (item->code == DCOM_CODE_NON) {
-        item->isRxAck = true;
-    }
-
     return (intptr_t)node;
 }
 
@@ -246,7 +244,7 @@ int DComCall(intptr_t handle) {
 
     TZListNode* node = (TZListNode*)handle;
     tItem* item = (tItem*)node->Data;
-    
+
     PT_BEGIN(&item->pt);
 
     PT_WAIT_UNTIL(&item->pt, item->isRxAck);
@@ -293,7 +291,7 @@ static int sendFrame(int protocol, uint64_t pipe, uint64_t dstIA, int code, int 
 // ackCallback是应答回调
 // timeout为0,ackCallback为NULL,有一个条件满足就表示不需要应答
 // 返回调用结果.非DCOM_OK表示调用失败
-int DComCallAsync(int protocol, uint64_t pipe, uint64_t dstIA, int rid, int timeout, uint8_t* req, int reqLen, 
+int DComCallAsync(int protocol, uint64_t pipe, uint64_t dstIA, int rid, int timeout, uint8_t* req, int reqLen,
     DComAckCallback ackCallback) {
     int code = DCOM_CODE_CON;
     if (timeout == 0 || ackCallback == NULL) {
@@ -301,7 +299,7 @@ int DComCallAsync(int protocol, uint64_t pipe, uint64_t dstIA, int rid, int time
     }
 
     int token = DComGetToken();
-    DComLogInfo("call async.token:%d protocol:%d pipe:0x%x dst ia:0x%x rid:%d timeout:%d", token, protocol, pipe, dstIA, 
+    DComLogInfo("call async.token:%d protocol:%d pipe:0x%x dst ia:0x%x rid:%d timeout:%d", token, protocol, pipe, dstIA,
         rid, timeout);
     int ret = sendFrame(protocol, pipe, dstIA, code, rid, token, req, reqLen);
     if (ret != DCOM_OK) {

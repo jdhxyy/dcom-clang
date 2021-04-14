@@ -75,7 +75,7 @@ void DComLoad(DComLoadParam param);
 // DComRun 模块运行
 void DComRun(void);
 
-// DComRpcCreateHandle 创建RPC调用句柄
+// DComCallCreateHandle 创建同步调用句柄
 // protocol是协议号
 // pipe是通信管道
 // timeout是超时时间,单位:ms
@@ -83,7 +83,7 @@ void DComRun(void);
 // 本函数调用后需调用DComRpcCallCoroutine进行RPC通信,调用结果result中存储的是错误码.非DCOM_OK表示调用失败
 // 调用成功后,应答数据保存在resp中,注意要释放
 // 返回句柄.非0表示创建成功
-intptr_t DComRpcCreateHandle(int protocol, uint64_t pipe, uint64_t dstIA, int rid, int timeout, uint8_t* req, int reqLen, 
+intptr_t DComCallCreateHandle(int protocol, uint64_t pipe, uint64_t dstIA, int rid, int timeout, uint8_t* req, int reqLen,
     uint8_t** resp, int* respLen, int* result);
 
 // DComCall 通过协程的方式进行DCOM的RPC同步调用
@@ -97,7 +97,7 @@ int DComCall(intptr_t handle);
 // ackCallback是应答回调
 // timeout为0,ackCallback为NULL,有一个条件满足就表示不需要应答
 // 返回调用结果.非DCOM_OK表示调用失败
-int DComCallAsync(int protocol, uint64_t pipe, uint64_t dstIA, int rid, int timeout, uint8_t* req, int reqLen, 
+int DComCallAsync(int protocol, uint64_t pipe, uint64_t dstIA, int rid, int timeout, uint8_t* req, int reqLen,
     DComAckCallback ackCallback);
 
 // DComRegister 注册服务回调函数

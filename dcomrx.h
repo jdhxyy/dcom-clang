@@ -7,7 +7,13 @@
 
 #include <stdint.h>
 
+// 接收FIFO大小
+#define DCOM_RX_FIFO_LEN 2
+
 // DComRxLoad 模块载入
 void DComRxLoad(void);
+
+// DComRxLoad 模块运行
+int DComRxRun(void);
 
 #endif

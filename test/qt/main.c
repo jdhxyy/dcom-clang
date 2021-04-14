@@ -191,7 +191,7 @@ static int case2(void) {
     rid1.b = 2;
     rid1.c = 3;
 
-    intptr_t handle = DComRpcCreateHandle(0, 0, 1, 1, 5000, (uint8_t*)&rid1, sizeof(tRid1), &resp, &respLen, &result);
+    intptr_t handle = DComCallCreateHandle(0, 0, 1, 1, 5000, (uint8_t*)&rid1, sizeof(tRid1), &resp, &respLen, &result);
     PT_WAIT_THREAD(&pt, DComCall(handle));
 
     printf("result:0x%x\n", result);
@@ -243,7 +243,7 @@ static int case4(void) {
         arr[i] = i + 1;
     }
 
-    intptr_t handle = DComRpcCreateHandle(0, 0, 1, 2, 5000, arr, 256, &resp, &respLen, &result);
+    intptr_t handle = DComCallCreateHandle(0, 0, 1, 2, 5000, arr, 256, &resp, &respLen, &result);
     PT_WAIT_THREAD(&pt, DComCall(handle));
 
     if (resp != NULL) {
@@ -269,7 +269,7 @@ static int case5(void) {
     uint8_t* resp = NULL;
     int respLen = 0;
     int result = 0;
-    intptr_t handle = DComRpcCreateHandle(0, 0, 1, 3, 5000, (uint8_t*)&rid1, sizeof(tRid1), &resp, &respLen, &result);
+    intptr_t handle = DComCallCreateHandle(0, 0, 1, 3, 5000, (uint8_t*)&rid1, sizeof(tRid1), &resp, &respLen, &result);
     PT_WAIT_THREAD(&pt, DComCall(handle));
 
 //    tRid1Ack* ack = (tRid1Ack*)resp;

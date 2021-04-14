@@ -21,7 +21,8 @@ SOURCES += \
     ../../lib/tzmalloc/tzmalloc.c \
     ../../lib/tztime/tztime.c \
     ../../dcom.c \
-    ../../dcomlog.c
+    ../../dcomlog.c \
+    ../../lib/tzfifo/tzfifo.c
 
 INCLUDEPATH += ../../ \
     ../../lib/crc16-clang \
@@ -29,7 +30,8 @@ INCLUDEPATH += ../../ \
     ../../lib/tzlist \
     ../../lib/tzmalloc \
     ../../lib/tztime \
-    ../../lib/pt
+    ../../lib/pt \
+    ../../lib/tzfifo
 
 HEADERS += \
     ../../dcomblockrx.h \
@@ -53,7 +55,8 @@ HEADERS += \
     ../../lib/tztime/tztime.h \
     ../../dcom.h \
     ../../dcomlog.h \
-    ../../dcomprotocol.h
+    ../../dcomprotocol.h \
+    ../../lib/tzfifo/tzfifo.h
 
 # disable C4819 warning
 QMAKE_CXXFLAGS_WARN_ON += -Wimplicit-fallthrough=

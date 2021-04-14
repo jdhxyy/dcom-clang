@@ -31,4 +31,5 @@ void DComRun(void) {
     DComBlockRxRun();
     DComBlockTxRun();
     DComWaitlistRun();
+    DComRxRun();
 }

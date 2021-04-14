@@ -174,7 +174,7 @@ static bool isNodeExist(int protocol, uint64_t pipe, uint64_t dstIA, int code, i
         }
         item = (tItem*)node->Data;
 
-        if (item->protocol == protocol && item->pipe == pipe && item->dstIA == dstIA && item->code == code && 
+        if (item->protocol == protocol && item->pipe == pipe && item->dstIA == dstIA && item->code == code &&
             item->rid == rid && item->token == token) {
             return true;
         }
@@ -237,21 +237,21 @@ void DComBlockRxBackFrame(int protocol, uint64_t pipe, uint64_t srcIA, DComFrame
 static bool checkNodeAndDealBackFrame(int protocol, uint64_t pipe, uint64_t srcIA, DComFrame* frame, TZListNode* node) {
     tItem* item = (tItem*)node->Data;
 
-    if (item->protocol != protocol || item->pipe != pipe || item->dstIA != srcIA || 
+    if (item->protocol != protocol || item->pipe != pipe || item->dstIA != srcIA ||
         item->rid != frame->ControlWord.bit.Rid || item->token != frame->ControlWord.bit.Token) {
         return false;
     }
     DComLogInfo("block tx receive back.token:%d", item->token);
     if (frame->ControlWord.bit.PayloadLen != 2) {
         DComLogWarn("block rx receive back deal failed!token:%d payload len is wrong:%d", item->token,
-			frame->ControlWord.bit.PayloadLen);
+            frame->ControlWord.bit.PayloadLen);
         return false;
     }
     int startOffset = (int)((frame->Payload[0] << 8) + frame->Payload[1]);
     if (startOffset >= item->dataLen) {
         // ·¢ËÍÍê³É
-        DComLogWarn("block rx receive back deal failed!token:%d start offset:%d > data len:%d", item->token, startOffset,
-			item->dataLen);
+        DComLogInfo("block tx end.receive back token:%d start offset:%d >= data len:%d", item->token, startOffset,
+            item->dataLen);
         TZListRemove(gList, node);
         return true;
     }
@@ -273,15 +273,15 @@ void DComBlockTxDealRstFrame(int protocol, uint64_t pipe, uint64_t srcIA, DComFr
         if (node == NULL) {
             break;
         }
-        
+
         item = (tItem*)node->Data;
-        if (item->protocol == protocol && item->pipe == pipe && item->dstIA == srcIA && 
+        if (item->protocol == protocol && item->pipe == pipe && item->dstIA == srcIA &&
             item->rid == frame->ControlWord.bit.Rid && item->token == frame->ControlWord.bit.Token) {
             DComLogWarn("block tx receive rst.token:%d", item->token);
             TZListRemove(gList, node);
             return;
         }
-        
+
         node = node->Next;
     }
 }
@@ -294,7 +294,7 @@ void DComBlockRemove(int protocol, uint64_t pipe, uint64_t dstIA, int code, int 
         if (node == NULL) {
             break;
         }
-        
+
         item = (tItem*)node->Data;
         if (item->protocol == protocol && item->pipe == pipe && item->dstIA == dstIA &&
                 item->code == code && item->rid == rid && item->token == token) {
@@ -302,7 +302,7 @@ void DComBlockRemove(int protocol, uint64_t pipe, uint64_t dstIA, int code, int 
             TZListRemove(gList, node);
             return;
         }
-        
+
         node = node->Next;
     }
 }
