@@ -38,7 +38,7 @@ static void dealRecv(int protocol, uint64_t pipe, uint64_t srcIA, DComFrame* fra
 
 // DComRxLoad ƒ£øÈ‘ÿ»Î
 void DComRxLoad(void) {
-    gFifo = TZFifoCreate(DComMid, DCOM_RX_FIFO_LEN, sizeof(tDcomRxHeader) + DCOM_FRAME_SIZE_MAX);
+    gFifo = TZFifoCreate(DComMid, DCOM_RX_FIFO_LEN, sizeof(tDcomRxHeader) + DCOM_FRAME_SIZE_MAX + 4);
     DComBlockRxSetCallback(dealRecv);
 }
 
