@@ -232,7 +232,7 @@ static void editNode(int protocol, uint64_t pipe, TZListNode* node, DComBlockFra
 
     if (item->blockHeader.Offset >= item->blockHeader.Total) {
         DComLogInfo("block rx receive end.token:%d", item->frame->ControlWord.bit.Token);
-        uint16_t crcCalc = Checksum(item->frame->Payload, item->blockHeader.Total);
+        uint16_t crcCalc = Crc16Checksum(item->frame->Payload, item->blockHeader.Total);
         if (crcCalc != item->blockHeader.Crc16) {
             DComLogWarn("block rx crc is wrong.token:%d crc calc:0x%x get:0x%x", item->frame->ControlWord.bit.Token, 
                 crcCalc, item->blockHeader.Crc16);

@@ -202,7 +202,7 @@ static TZListNode* createNode(int protocol, uint64_t pipe, uint64_t dstIA, int c
     item->token = token;
     item->dataLen = dataLen;
     memcpy(item->data, data, (size_t)dataLen);
-    item->crc16 = Checksum(data, (uint16_t)dataLen);
+    item->crc16 = Crc16Checksum(data, (uint16_t)dataLen);
 
     item->isFirstFrame = true;
     item->firstFrameRetryNum = 0;
