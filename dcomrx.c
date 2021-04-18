@@ -7,15 +7,15 @@
 #include "dcomrxcon.h"
 #include "dcomwaitlist.h"
 #include "dcomblocktx.h"
-#include "dcomcommon.h"
 #include "dcomlog.h"
+#include "dcom.h"
 
 #include "tzlist.h"
 #include "tzmalloc.h"
 #include "pt.h"
 #include "tztime.h"
 #include "tzfifo.h"
-#include "dcom.h"
+#include "tzbox.h"
 
 #pragma pack(1)
 
@@ -111,7 +111,7 @@ int DComRxRun(void) {
         PT_EXIT(&pt);
     }
     DComFrame* frame = (DComFrame*)bytes;
-    frame->ControlWord.value = DComNtohl(frame->ControlWord.value);
+    frame->ControlWord.value = TZBoxNtohl(frame->ControlWord.value);
     if (frame->ControlWord.bit.PayloadLen + sizeof(DComFrame) != (uint32_t)rx.size) {
         DComLogWarn("receive data error:bytes to frame failed", rx.srcIA);
         PT_EXIT(&pt);
@@ -120,9 +120,9 @@ int DComRxRun(void) {
         dealRecv(rx.protocol, rx.pipe, rx.srcIA, frame, frame->ControlWord.bit.PayloadLen);
     } else {
         DComBlockFrame* blockFrame = (DComBlockFrame*)frame;
-        blockFrame->BlockHeader.Crc16 = DComNtohs(blockFrame->BlockHeader.Crc16);
-        blockFrame->BlockHeader.Total = DComNtohs(blockFrame->BlockHeader.Total);
-        blockFrame->BlockHeader.Offset = DComNtohs(blockFrame->BlockHeader.Offset);
+        blockFrame->BlockHeader.Crc16 = TZBoxNtohs(blockFrame->BlockHeader.Crc16);
+        blockFrame->BlockHeader.Total = TZBoxNtohs(blockFrame->BlockHeader.Total);
+        blockFrame->BlockHeader.Offset = TZBoxNtohs(blockFrame->BlockHeader.Offset);
         DComBlockRxReceive(rx.protocol, rx.pipe, rx.srcIA, blockFrame);
     }
 

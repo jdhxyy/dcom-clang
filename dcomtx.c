@@ -3,11 +3,11 @@
 // Authors: jdh99 <jdh821@163.com>
 
 #include "dcomtx.h"
-#include "dcomcommon.h"
 #include "dcomlog.h"
 #include "dcom.h"
 
 #include "tzmalloc.h"
+#include "tzbox.h"
 
 #include <string.h>
 
@@ -34,9 +34,9 @@ void DComSend(int protocol, uint64_t pipe, uint64_t dstIA, DComFrame* frame) {
         dstIA);
 
     int payloadLen = frame->ControlWord.bit.PayloadLen;
-    frame->ControlWord.value = DComHtonl(frame->ControlWord.value);
+    frame->ControlWord.value = TZBoxHtonl(frame->ControlWord.value);
     gSend(protocol, pipe, dstIA, (uint8_t*)frame, (int)sizeof(DComFrame) + payloadLen);
-    frame->ControlWord.value = DComNtohl(frame->ControlWord.value);
+    frame->ControlWord.value = TZBoxNtohl(frame->ControlWord.value);
 }
 
 // DComBlockSend 块传输发送数据
@@ -53,16 +53,16 @@ void DComBlockSend(int protocol, uint64_t pipe, uint64_t dstIA, DComBlockFrame* 
         protocol, pipe, dstIA, frame->BlockHeader.Offset);
 
     int payloadLen = frame->ControlWord.bit.PayloadLen;
-    frame->ControlWord.value = DComHtonl(frame->ControlWord.value);
-    frame->BlockHeader.Crc16 = DComHtons(frame->BlockHeader.Crc16);
-    frame->BlockHeader.Total = DComHtons(frame->BlockHeader.Total);
-    frame->BlockHeader.Offset = DComHtons(frame->BlockHeader.Offset);
+    frame->ControlWord.value = TZBoxHtonl(frame->ControlWord.value);
+    frame->BlockHeader.Crc16 = TZBoxHtons(frame->BlockHeader.Crc16);
+    frame->BlockHeader.Total = TZBoxHtons(frame->BlockHeader.Total);
+    frame->BlockHeader.Offset = TZBoxHtons(frame->BlockHeader.Offset);
     
     gSend(protocol, pipe, dstIA, (uint8_t*)frame, (int)sizeof(DComControlWord) + payloadLen);
-    frame->ControlWord.value = DComNtohl(frame->ControlWord.value);
-    frame->BlockHeader.Crc16 = DComNtohs(frame->BlockHeader.Crc16);
-    frame->BlockHeader.Total = DComNtohs(frame->BlockHeader.Total);
-    frame->BlockHeader.Offset = DComNtohs(frame->BlockHeader.Offset);
+    frame->ControlWord.value = TZBoxNtohl(frame->ControlWord.value);
+    frame->BlockHeader.Crc16 = TZBoxNtohs(frame->BlockHeader.Crc16);
+    frame->BlockHeader.Total = TZBoxNtohs(frame->BlockHeader.Total);
+    frame->BlockHeader.Offset = TZBoxNtohs(frame->BlockHeader.Offset);
 }
 
 // DComIsAllowSend 是否允许发送
