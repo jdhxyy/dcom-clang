@@ -34,6 +34,8 @@ static uint64_t getTime(void);
 static bool isAllowSend(uint64_t pipe);
 static void pipeSend(int protocol, uint64_t pipe, uint64_t dstIA, uint8_t* bytes, int size);
 
+static void case0(void);
+
 static void case1(void);
 static int callback1(uint64_t pipe, uint64_t srcIA, uint8_t* req, int reqLen, uint8_t** resp, int* respLen);
 static int callback2(uint64_t pipe, uint64_t srcIA, uint8_t* req, int reqLen, uint8_t** resp, int* respLen);
@@ -67,6 +69,8 @@ int main() {
     DComLogSetFilterLevel(LAGAN_LEVEL_DEBUG);
 
     struct pt pt;
+
+    case0();
 
     case1();
     //case2();
@@ -126,6 +130,16 @@ static void pipeSend(int protocol, uint64_t pipe, uint64_t dstIA, uint8_t* bytes
     printf("\n");
 
     DComReceive(protocol, pipe, dstIA, bytes, size);
+}
+
+static void case0(void) {
+    uint8_t ip[4] = {0x12, 0x34, 0x56, 0x78};
+    uint16_t port = 0x2345;
+    uint64_t pipe = DComAddrToPipe(ip, port);
+    printf("pipe=0x%llx\n", pipe);
+
+    DComPipeToAddr(pipe, ip, &port);
+    printf("ip=0x%x 0x%x 0x%x 0x%x,port=0x%x\n", ip[0], ip[1], ip[2], ip[3], port);
 }
 
 static void case1(void) {

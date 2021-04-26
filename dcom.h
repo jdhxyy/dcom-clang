@@ -113,4 +113,12 @@ void DComReceive(int protocol, uint64_t pipe, uint64_t srcIA, uint8_t* bytes, in
 // DComLogSetFilterLevel 设置日志过滤级别
 void DComLogSetFilterLevel(LaganLevel level);
 
+// AddrToPipe 网络地址转换为管道号
+// 转换规则为网络端口+ip地址.大端排列
+uint64_t DComAddrToPipe(uint8_t* ip, uint16_t port);
+
+// PipeToAddr 管道号转换为网络地址
+// 转换规则为网络端口+ip地址.大端排列
+void DComPipeToAddr(uint64_t pipe, uint8_t* ip, uint16_t* port);
+
 #endif
